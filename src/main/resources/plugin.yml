@@ -1,0 +1,11 @@
+name: Tchests
+version: ${project.version}
+main: koral.tchests.Tchests
+api-version: 1.13
+authors: [koral]
+description: treasure chests
+commands:
+  tchestaddnew:
+  tchestremove:
+  tchesttp:
+  tchesteditor:
