@@ -2,7 +2,6 @@ package koral.tchests;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -13,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TchestsCommands implements CommandExecutor {
 
@@ -21,6 +19,13 @@ public class TchestsCommands implements CommandExecutor {
     public TchestsCommands(final Tchests plugin) {
         this.plugin = plugin;
     }
+
+    /**
+    tchestaddnew dodaje skrzynie
+     tchestremove usuwa skrzynie razem z id
+     tchesttp teleportuje do id z skrzynia
+     tchesteditor to edytor skrzyni
+     */
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

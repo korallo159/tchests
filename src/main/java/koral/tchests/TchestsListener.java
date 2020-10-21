@@ -2,25 +2,17 @@ package koral.tchests;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+
 
 public class TchestsListener implements Listener {
 
@@ -31,12 +23,17 @@ public class TchestsListener implements Listener {
     }
 
 
+    /**
+    **podczas zamykania inv sprawdza czy ma permisje tchest.create jesli tak, to sprawdza czy ma editora.
+    **reszta zapisuje do configu items bez serialize
+    **kazda nowa skrzynka to nowe ID, zeby mozna bylo sie fajnie do nich odnosic
+     **/
     @EventHandler
     public void onTChestCloseSaveItems(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
         if (e.getInventory().getHolder() instanceof Chest && ((Chest) e.getInventory().getHolder()).getCustomName() !=null
                 && ((Chest) e.getInventory().getHolder()).getCustomName().equals(ChatColor.RED + "Treasure chest")
-                && p.hasPermission("tchest.create"))
+                && p.hasPermission("tchest.create")) 
         {
             if (plugin.editor.containsKey(p.getUniqueId().toString()) && plugin.editor.get(p.getUniqueId().toString()) == true ) {
                 Chest chest = (Chest) e.getInventory().getHolder();
@@ -48,7 +45,7 @@ public class TchestsListener implements Listener {
                 }
                 int counter = 0;
                 if (this.plugin.getConfig().getConfigurationSection("Chest." + counter) == null) {
-                    this.plugin.getConfig().set("Chest." + counter + ".Items", (Object) items);
+                    this.plugin.getConfig().set("Chest." + counter + ".Items",items);
                     this.plugin.getConfig().set("Chest." + counter + ".Location", b.getLocation());
                     this.plugin.saveConfig();
                 }
@@ -59,7 +56,7 @@ public class TchestsListener implements Listener {
                     }
                     counter++;
                 }
-                this.plugin.getConfig().set("Chest." + counter + ".Items", (Object) items);
+                this.plugin.getConfig().set("Chest." + counter + ".Items",items);
                 this.plugin.getConfig().set("Chest." + counter + ".Location", b.getLocation());
                 this.plugin.saveConfig();
             }
@@ -67,15 +64,21 @@ public class TchestsListener implements Listener {
         else
             return;
     }
+    /**
+    Tu na szybkosci zrobilem, ze jak gracz zamyka to usuwa skrzynie, wypaduja itemy i pojawia sie skrzynia po prostu zarys,
+     */
+
+
     @EventHandler
     public void onSingleChestCloseRemove(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        if (e.getInventory().getHolder() instanceof Chest && ((Chest) e.getInventory().getHolder()).getCustomName() !=null &&  ((Chest) e.getInventory().getHolder()).getCustomName().equals(ChatColor.RED + "Treasure chest")) {
+        if (e.getInventory().getHolder() instanceof Chest
+            && ((Chest) e.getInventory().getHolder()).getCustomName() !=null
+            &&  ((Chest) e.getInventory().getHolder()).getCustomName().equals(ChatColor.RED + "Treasure chest")) {
             if(!plugin.editor.containsKey(p.getUniqueId().toString()) || plugin.editor.get(p.getUniqueId().toString()) == false ) {
                 Chest chest = (Chest) e.getInventory().getHolder();
                 Block block = chest.getBlock();
                 Material previous = block.getType();
-                ArrayList<ItemStack> items = new ArrayList<>();
                 block.setType(Material.AIR);
                 Bukkit.getServer().getScheduler().runTaskLater(plugin, () -> block.setType(previous), 80L);
                 block.getState();
@@ -84,6 +87,7 @@ public class TchestsListener implements Listener {
                 return;
         }
     }
+
 
 
 }
